@@ -2,6 +2,7 @@
 
 
 from typing import Callable
+from itertools import batched
 
 
 def read_input(path):
@@ -43,14 +44,9 @@ assert is_invalid_part_1("11")
 assert is_invalid_part_1("38593859")
 assert not is_invalid_part_1("1698528")
 
-print(solve("input", is_invalid_part_1))
+print(solve("input", is_invalid_part_1))  # 21898734247
 
 # %%
-
-
-def grouper(iterable, n):
-    iterators = [iter(iterable)] * n
-    return zip(*iterators, strict=True)
 
 
 def is_invalid_part_2(id: str | int) -> bool:
@@ -59,13 +55,13 @@ def is_invalid_part_2(id: str | int) -> bool:
 
         try:
             # unique length n chunks of id
-            unique_chunks = set(grouper(id, n))
+            unique_chunks = set(batched(id, n))
         
         except ValueError:
             # if n isn't a divisor of len(id), a ValueError is thrown
             continue
 
-        if len(set(unique_chunks)) == 1:
+        if len(unique_chunks) == 1:
             return True
     
     else:
@@ -76,4 +72,4 @@ assert is_invalid_part_2("446446")
 assert is_invalid_part_2("2121212121")
 assert not is_invalid_part_2("2121212124")
 
-print(solve("input", is_invalid_part_2))
+print(solve("input", is_invalid_part_2))  # 28915664389
