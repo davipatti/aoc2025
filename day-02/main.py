@@ -53,13 +53,7 @@ def is_invalid_part_2(id: str | int) -> bool:
     id = str(id)
     for n in range(1, (len(id) // 2) + 1):
 
-        try:
-            # unique length n chunks of id
-            unique_chunks = set(batched(id, n))
-        
-        except ValueError:
-            # if n isn't a divisor of len(id), a ValueError is thrown
-            continue
+        unique_chunks = set(batched(id, n))
 
         if len(unique_chunks) == 1:
             return True
