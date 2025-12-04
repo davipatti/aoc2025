@@ -1,5 +1,3 @@
-# %%
-
 import numpy as np
 from scipy import signal
 
@@ -12,18 +10,11 @@ def read_input(path):
 
 KERNEL = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]])
 
-# %%
-
 
 def part1(input_path):
     grid = np.array(list(read_input(input_path)))
     result = signal.convolve2d(grid, KERNEL, mode="same")
     return (result[grid == 1] < 4).sum()
-
-
-print(part1("input"))
-
-# %%
 
 
 def remove_accessible_rolls(grid: np.ndarray) -> np.ndarray:
@@ -58,4 +49,6 @@ def part2(input_path):
     return grid.sum() - remove_accessible_rolls(grid).sum()
 
 
-print(part2("input"))
+if __name__ == "__main__":
+    print(part1("input"))
+    print(part2("input"))
