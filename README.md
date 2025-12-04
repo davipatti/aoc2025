@@ -4,3 +4,8 @@
 - [Terry](https://github.com/terrycojones/advent-of-code-2025)
 - [Sam T](https://github.com/SamT123/aoc2025)
 - [Rish](https://github.com/rishvanth-kp/advent25)
+
+
+**Day 4 animation**
+
+![day4](day-04/img/output.gif)
