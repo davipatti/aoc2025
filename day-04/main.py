@@ -18,7 +18,7 @@ KERNEL = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]])
 def remove_accessible_rolls(grid: np.ndarray, recursive: bool) -> np.ndarray:
     n_rolls_orig = grid.sum()
 
-    n_neighbours = signal.convolve2d(grid, KERNEL, mode="same").astype(float)
+    n_neighbours = signal.convolve2d(grid, KERNEL, mode="same")
 
     # remove accessible rolls
     grid[n_neighbours < 4] = 0
