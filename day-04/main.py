@@ -20,13 +20,10 @@ def remove_accessible_rolls(grid: np.ndarray, recursive: bool) -> np.ndarray:
 
     n_neighbours = signal.convolve2d(grid, KERNEL, mode="same").astype(float)
 
-    n_neighbours[grid == 0] = np.nan  # empty slots -> nan
-
     # remove accessible rolls
     idx = np.argwhere(n_neighbours < 4)
     grid[idx[:, 0], idx[:, 1]] = 0
 
-    # keep trying to remove rolls if rolls were just removed
     return (
         remove_accessible_rolls(grid, recursive)
         if recursive and grid.sum() != n_rolls_orig
@@ -37,8 +34,8 @@ def remove_accessible_rolls(grid: np.ndarray, recursive: bool) -> np.ndarray:
 def solve(input_path, recursive):
     grid = read_input(input_path)
 
-    # number of rolls removed is the number of initial rolls - number of
-    # ending rolls
+    # number of rolls removed is:
+    # number of initial rolls - number of ending rolls
     return grid.sum() - remove_accessible_rolls(grid, recursive).sum()
 
 
