@@ -3,7 +3,8 @@ from main import Span as S, merge
 assert S(0, 10).overlaps(S(5, 15))
 assert S(5, 15).overlaps(S(0, 10))
 assert S(0, 10).overlaps(S(10, 15))  # ranges are inclusive
-assert S(0, 10).overlaps(S(4, 5))
+assert S(0, 10).overlaps(S(4, 5)) # other entirely contained
+assert S(4, 5).overlaps(S(0, 10)) # self entirely contained
 assert not S(0, 10).overlaps(S(11, 15))
 assert not S(11, 15).overlaps(S(0, 10))
 assert not S(0, 4).overlaps(S(10, 14))
