@@ -27,8 +27,8 @@ def part1(path):
 def part2(path):
     start, lines = load_data(path)
     beams = Counter({start: 1})
-    for line in lines:
-        for hit in set(beams) & line:
+    for splitter in lines:
+        for hit in set(beams) & splitter:
             value = beams.pop(hit)
             beams[hit - 1] += value
             beams[hit + 1] += value
