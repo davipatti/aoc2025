@@ -9,18 +9,18 @@ class JunctionBoxes:
         self.m = len(self.coords)
         self.dists = pdist(self.coords)
 
-        # pairs of coords in dists
-        self.pairs = np.vstack(np.triu_indices(self.m, k=1)).T
+        # pairs of coords, sorted by distance
+        pairs = np.vstack(np.triu_indices(self.m, k=1)).T
+        self.pairs = pairs[np.argsort(self.dists)]
 
     def part1(self, n_closest: int = 1000):
-        edges = self.pairs[np.argsort(self.dists)][:n_closest]
-        g = nx.Graph(list(edges))
+        g = nx.Graph(list(self.pairs[:n_closest]))
         cc_lens = [len(cc) for cc in nx.connected_components(g)]
         return np.prod(sorted(cc_lens)[-3:])
 
     def part2(self):
         g = nx.Graph()
-        for u, v in self.pairs[np.argsort(self.dists)]:
+        for u, v in self.pairs:
             g.add_edge(u, v)
             if (
                 g.number_of_nodes() == self.m  # all nodes added
