@@ -9,14 +9,10 @@ class JunctionBoxes:
     def __init__(self, path):
         self.coords = np.loadtxt(path, int, delimiter=",")
         self.m = len(self.coords)
-        self.dists = pdist(self.coords)        
-        self.pairs = np.array(  # pairs of coords in dists
-            [
-                (i, j)
-                for i, j in product(range(self.m), repeat=2)
-                if i < j and j < self.m
-            ]
-        )
+        self.dists = pdist(self.coords)
+
+        # pairs of coords in dists
+        self.pairs = np.vstack(np.triu_indices(self.m, k=1)).T  # pairs of coords in dists
 
     def part1(self, n_closest: int = 1000):
         edges = self.pairs[np.argsort(self.dists)][:n_closest]
