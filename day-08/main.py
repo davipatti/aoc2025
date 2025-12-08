@@ -12,7 +12,7 @@ class JunctionBoxes:
         self.dists = pdist(self.coords)
 
         # pairs of coords in dists
-        self.pairs = np.vstack(np.triu_indices(self.m, k=1)).T  # pairs of coords in dists
+        self.pairs = np.vstack(np.triu_indices(self.m, k=1)).T
 
     def part1(self, n_closest: int = 1000):
         edges = self.pairs[np.argsort(self.dists)][:n_closest]
