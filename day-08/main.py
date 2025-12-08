@@ -1,5 +1,3 @@
-from itertools import product
-
 from scipy.spatial.distance import pdist
 import networkx as nx
 import numpy as np
