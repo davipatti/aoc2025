@@ -50,10 +50,8 @@ def plot_experiments(counts):
 if __name__ == "__main__":
     np.random.seed(42)
 
-    n_reps = 100
-
     # Without replacement
-    counts = run_experiments(n_reps=n_reps, with_replacement=False)
+    counts = run_experiments(with_replacement=False)
     plot_experiments(counts)
     plt.title(
         "Number of draws of random edges required to fully\n"
@@ -63,15 +61,12 @@ if __name__ == "__main__":
     plt.savefig("random-draws.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-
     # With replacement
-    counts_with_replacement = run_experiments(
-        n_reps=n_reps, with_replacement=True
-    )
+    counts_with_replacement = run_experiments(with_replacement=True)
     plot_experiments(counts_with_replacement)
     plt.title(
         "Number of draws of random edges required to fully\n"
-        f"connect graph with n nodes ({counts.shape[1]} repeats for each n,\n"
+        f"connect graph with n nodes ({counts_with_replacement.shape[1]} repeats for each n,\n"
         "nodes randomly selected with replacement)"
     )
     plt.savefig(
