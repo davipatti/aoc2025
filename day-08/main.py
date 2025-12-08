@@ -25,8 +25,8 @@ class JunctionBoxes:
         for u, v in self.pairs[np.argsort(self.dists)]:
             g.add_edge(u, v)
             if (
-                len(g.nodes()) == self.m  # all nodes added
-                and len(list(nx.connected_components(g))) == 1  # single cc
+                g.number_of_nodes() == self.m  # all nodes added
+                and nx.number_connected_components(g) == 1
             ):
                 return self.coords[u, 0] * self.coords[v, 0]
 
