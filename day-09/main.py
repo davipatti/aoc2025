@@ -46,6 +46,7 @@ class Rectangle:
         yield AxisLine(br, bl)
 
     def contains(self, pt: Point) -> bool:
+        """Test if a point is inside this rectangle"""
         return self.l < pt.x < self.r and self.b < pt.y < self.t
 
 
@@ -87,6 +88,8 @@ def part1(path):
 
 def part2(path):
     points = load_data(path)
+
+    # the list wraps, so duplicating the first point at the end closes the loop
     lines = [AxisLine(*corners) for corners in pairwise(points + [points[0]])]
 
     rectangles = [
@@ -97,10 +100,19 @@ def part2(path):
     ]
     heapq.heapify(rectangles)
 
-    while True:
+    while rectangles:
+
         area, rect = heapq.heappop(rectangles)
-        if not any(rect.contains(point) for point in points) and not any(
-            edge.intersects(line) for edge in rect.edges for line in lines
+
+        if (
+            # rectangle can't contain any of the input points
+            not any(rect.contains(point) for point in points)
+        ) and (
+            # rectangle edges can't intersect any line between consecutive
+            # input points
+            not any(
+                edge.intersects(line) for edge in rect.edges for line in lines
+            )
         ):
             return -area
 
