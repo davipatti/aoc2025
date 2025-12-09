@@ -30,6 +30,11 @@ class Rectangle:
         self.t = max(self.corner_a.y, self.corner_b.y)
         self.b = min(self.corner_a.y, self.corner_b.y)
 
+    def __gt__(self, other) -> bool:
+        """Here mainly so that Rects can be put into heaps"""
+        return self.area > other.area
+
+    @property
     def edges(self):
         bl = Point(self.l, self.b)
         tl = Point(self.l, self.t)
@@ -85,16 +90,17 @@ def part2(path):
     lines = [AxisLine(*corners) for corners in pairwise(points + [points[0]])]
 
     rectangles = [
-        (-Rectangle(*corners).area, corners)
-        for corners in combinations(points, 2)
+        (-rect.area, rect)
+        for rect in (
+            Rectangle(*corners) for corners in combinations(points, 2)
+        )
     ]
     heapq.heapify(rectangles)
 
     while True:
-        area, corners = heapq.heappop(rectangles)
-        rect = Rectangle(*corners)
+        area, rect = heapq.heappop(rectangles)
         if not any(rect.contains(point) for point in points) and not any(
-            edge.intersects(line) for edge in rect.edges() for line in lines
+            edge.intersects(line) for edge in rect.edges for line in lines
         ):
             return -area
 
