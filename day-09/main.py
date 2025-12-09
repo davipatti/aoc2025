@@ -1,3 +1,4 @@
+import heapq
 from collections import namedtuple
 from dataclasses import dataclass
 from itertools import combinations, pairwise
@@ -82,14 +83,20 @@ def part1(path):
 def part2(path):
     points = load_data(path)
     lines = [AxisLine(*corners) for corners in pairwise(points + [points[0]])]
-    max_area = 0
-    for corners in combinations(points, 2):
+
+    rectangles = [
+        (-Rectangle(*corners).area, corners)
+        for corners in combinations(points, 2)
+    ]
+    heapq.heapify(rectangles)
+
+    while True:
+        area, corners = heapq.heappop(rectangles)
         rect = Rectangle(*corners)
         if not any(rect.contains(point) for point in points) and not any(
             edge.intersects(line) for edge in rect.edges() for line in lines
         ):
-            max_area = max(max_area, rect.area)
-    return max_area
+            return -area
 
 
 if __name__ == "__main__":
