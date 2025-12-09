@@ -30,10 +30,14 @@ class Rectangle:
         self.b = min(self.corner_a.y, self.corner_b.y)
 
     def edges(self):
-        yield AxisLine(self.corner_a, Point(self.corner_a.x, self.corner_b.y))
-        yield AxisLine(Point(self.corner_a.x, self.corner_b.y), self.corner_b)
-        yield AxisLine(self.corner_b, Point(self.corner_b.x, self.corner_a.y))
-        yield AxisLine(Point(self.corner_b.x, self.corner_a.y), self.corner_b)
+        bl = Point(self.l, self.b)
+        tl = Point(self.l, self.t)
+        tr = Point(self.r, self.t)
+        br = Point(self.r, self.b)
+        yield AxisLine(bl, tl)
+        yield AxisLine(tl, tr)
+        yield AxisLine(tr, br)
+        yield AxisLine(br, bl)
 
     def contains(self, pt: Point) -> bool:
         return self.l < pt.x < self.r and self.b < pt.y < self.t
