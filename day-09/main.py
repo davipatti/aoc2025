@@ -64,6 +64,9 @@ class AxisLine:
         self.bottom = min(self.a.y, self.b.y)
         self.is_vertical = self.a.x == self.b.x
 
+    def __len__(self):
+        return self.top - self.bottom if self.is_vertical else self.right - self.left
+
     def intersects(self, other) -> bool:
         """
         Only true if one line is vertical and the other is horizontal
