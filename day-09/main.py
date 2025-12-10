@@ -79,6 +79,18 @@ class AxisLine:
         return False
 
 
+def start_at_alt(items, i):
+    l = len(items)
+    yield items[i]
+    for offset in range(1, (l // 2) + 1):
+        idx_r = (i + offset) % l
+        yield items[idx_r]
+        idx_l = (i - offset) % l
+        if idx_r == idx_l:
+            break
+        yield items[idx_l]
+
+
 def part1(path):
     return max(
         Rectangle(*corners).area
@@ -89,32 +101,36 @@ def part1(path):
 def part2(path):
     points = load_data(path)
 
-    # the list wraps, so duplicating the first point at the end closes the loop
+    # The list wraps, so duplicating the first point at the end closes the loop
     lines = [AxisLine(*corners) for corners in pairwise(points + [points[0]])]
 
-    rectangles = [
-        (-rect.area, rect)
-        for rect in (
-            Rectangle(*corners) for corners in combinations(points, 2)
-        )
-    ]
+    rectangles = []
+    for i, j in combinations(range(len(points)), 2):
+        rect = Rectangle(points[i], points[j])
+        rectangles.append((-rect.area, rect, i))
+
     heapq.heapify(rectangles)
 
     while rectangles:
 
-        area, rect = heapq.heappop(rectangles)
+        _, rect, i = heapq.heappop(rectangles)
 
         if (
-            # rectangle can't contain any of the input points
-            not any(rect.contains(point) for point in points)
+            # Rectangle can't contain any of the input points.
+            # `start_at_alt` starts iterating through points closest to index i
+            # (the index of Rectangle.corner_a in points). The closer a point
+            # is to corner_a, the more likely it is to be contained in the
+            # rectangle, and if it is, the fewer point we have to iterate
+            # through to potentially rule out this rectangle.
+            not any(rect.contains(point) for point in start_at_alt(points, i))
         ) and (
-            # rectangle edges can't intersect any line between consecutive
-            # input points
+            # Rectangle edges can't intersect any line between consecutive
+            # input points.
             not any(
                 edge.intersects(line) for edge in rect.edges for line in lines
             )
         ):
-            return -area
+            return rect.area
 
 
 if __name__ == "__main__":
