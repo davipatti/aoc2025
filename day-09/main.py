@@ -64,15 +64,14 @@ class AxisLine:
         self.bottom = min(self.a.y, self.b.y)
         self.is_vertical = self.a.x == self.b.x
 
-    def __len__(self):
-        return self.top - self.bottom if self.is_vertical else self.right - self.left
-
     def intersects(self, other) -> bool:
         """
         Only true if one line is vertical and the other is horizontal
         """
         if self.is_vertical != other.is_vertical:
-            (v_line, h_line) = (self, other) if self.is_vertical else (other, self)
+            (v_line, h_line) = (
+                (self, other) if self.is_vertical else (other, self)
+            )
             return (
                 v_line.bottom < h_line.a.y < v_line.top
                 and h_line.left < v_line.a.x < h_line.right
@@ -81,7 +80,10 @@ class AxisLine:
 
 
 def part1(path):
-    return max(Rectangle(*corners).area for corners in combinations(load_data(path), 2))
+    return max(
+        Rectangle(*corners).area
+        for corners in combinations(load_data(path), 2)
+    )
 
 
 def part2(path):
@@ -92,7 +94,9 @@ def part2(path):
 
     rectangles = [
         (-rect.area, rect)
-        for rect in (Rectangle(*corners) for corners in combinations(points, 2))
+        for rect in (
+            Rectangle(*corners) for corners in combinations(points, 2)
+        )
     ]
     heapq.heapify(rectangles)
 
@@ -106,7 +110,9 @@ def part2(path):
         ) and (
             # rectangle edges can't intersect any line between consecutive
             # input points
-            not any(edge.intersects(line) for edge in rect.edges for line in lines)
+            not any(
+                edge.intersects(line) for edge in rect.edges for line in lines
+            )
         ):
             return -area
 
