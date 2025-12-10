@@ -16,34 +16,31 @@ class State:
     presses: int
 
     def __post_init__(self):
-        self.distance = (self.target - self.counters).sum()
+        self.dist = (self.target - self.counters).sum()
 
     def __lt__(self, other):
-        return self.distance < other.distance
+        return (self.presses + self.dist) < (other.presses + other.dist)
 
     @property
     def children(self):
 
-        for i, button in enumerate(self.buttons):
+        for button in self.buttons:
 
             next_counters = self.counters.copy()
             next_counters[button] += 1
 
             # no counters overshoot
             if not any(next_counters > self.target):
-                yield State(
-                    self.buttons, next_counters, self.target, self.presses + 1
-                )
 
-            # counter has overshot having pressed this button
-            # remove this button, and children without it
-            else:
-                next_buttons = self.buttons.copy()
-                next_buttons.pop(i)
-                if next_buttons:
-                    yield from State(
-                        next_buttons, self.counters, target, self.presses
-                    ).children
+                next_buttons = [
+                    b
+                    for b in self.buttons
+                    if np.all(next_counters[b] + 1 <= self.target[b])
+                ]
+
+                yield State(
+                    next_buttons, next_counters, self.target, self.presses + 1
+                )
 
 
 def count_presses(buttons, target):
@@ -73,13 +70,16 @@ def count_presses(buttons, target):
     return state.presses
 
 
-n_presses = 0
-for _, buttons, target in tqdm(list(load_data("input"))):
-    target = np.array(target)
-    n_presses += count_presses(buttons, target)
-print()
+def solve(path):
+    n_presses = 0
+    for _, buttons, target in tqdm(list(load_data(path))):
+        target = np.array(target)
+        n_presses += count_presses(buttons, target)
+    return n_presses
 
-print(n_presses)
 
+assert solve("example") == 33
+
+solve("input")
 
 # %%
