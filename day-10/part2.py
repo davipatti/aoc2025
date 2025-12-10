@@ -1,6 +1,5 @@
-# %%
-
 from dataclasses import dataclass
+from functools import cached_property
 import heapq
 import numpy as np
 from tqdm import tqdm
@@ -9,7 +8,7 @@ from main import load_data
 
 
 @dataclass
-class State:
+class Node:
     buttons: list
     counters: np.ndarray
     target: np.ndarray
@@ -19,7 +18,11 @@ class State:
         self.dist = (self.target - self.counters).sum()
 
     def __lt__(self, other):
-        return (self.presses + self.dist) < (other.presses + other.dist)
+        return self.presses < other.presses
+
+    @cached_property
+    def key(self) -> tuple:
+        return tuple(self.counters)
 
     @property
     def children(self):
@@ -38,48 +41,42 @@ class State:
                     if np.all(next_counters[b] + 1 <= self.target[b])
                 ]
 
-                yield State(
+                yield Node(
                     next_buttons, next_counters, self.target, self.presses + 1
                 )
 
 
 def count_presses(buttons, target):
-
     counters = np.zeros_like(target)
 
-    states = [State(buttons, counters, target, presses=0)]
-    heapq.heapify(states)
+    tree = [Node(buttons, counters, target, presses=0)]
+    heapq.heapify(tree)
 
-    visited = {tuple(counters)}
+    node = heapq.heappop(tree)
+    visited = {node.key}
 
-    state = heapq.heappop(states)
+    while not all(node.counters == target):
 
-    while not all(state.counters == target):
+        for child in node.children:
+            if child.key not in visited:
+                visited.add(child.key)
+                heapq.heappush(tree, child)
 
-        for child in state.children:
-            key = tuple(child.counters)
-            if key not in visited:
-                visited.add(key)
-                heapq.heappush(states, child)
+        if not tree:
+            raise ValueError("probably shouldn't happen")
 
-        if not states:
-            return 0
+        node = heapq.heappop(tree)
 
-        state = heapq.heappop(states)
-
-    return state.presses
+    return node.presses
 
 
 def solve(path):
-    n_presses = 0
-    for _, buttons, target in tqdm(list(load_data(path))):
-        target = np.array(target)
-        n_presses += count_presses(buttons, target)
-    return n_presses
+    return sum(
+        count_presses(buttons, target)
+        for _, buttons, target in tqdm(list(load_data(path)))
+    )
 
 
-assert solve("example") == 33
-
-solve("input")
-
-# %%
+if __name__ == "__main__":
+    assert solve("example") == 33
+    print(solve("input"))
