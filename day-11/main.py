@@ -46,7 +46,7 @@ def part2(path):
 def count_paths(g, start, end):
     """Heart of part 2"""
 
-    @cache
+    @cache  # memoisation only improves runtime from ~4 -> ~0.8 s
     def count(u):
         if u == end:
             return 1
