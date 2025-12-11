@@ -68,8 +68,7 @@ def count_paths_iter(path, start_ends, plot=False):
             nrows=2, ncols=2, figsize=(20, 10), sharex=True, sharey=True
         )
         axes = iter(fig.axes)
-        # pos = nx.bfs_layout(g, "svr")
-        pos = nx.kamada_kawai_layout(g)
+        pos = nx.bfs_layout(g, "svr")
         ax = next(axes)
         plot_graph(g, pos=pos, ax=ax)
         ax.set_title("Full graph")
