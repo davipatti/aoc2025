@@ -26,8 +26,10 @@ def count_paths(graph, start, end):
     return count(start)
 
 
-def count_paths_route(graph, route):
-    return math.prod(count_paths(graph, start, end) for start, end in route)
+def count_paths_in_route(graph, route):
+    return math.prod(
+        count_paths(graph, start, end) for start, end in pairwise(route)
+    )
 
 
 def part1(graph):
@@ -35,9 +37,13 @@ def part1(graph):
 
 
 def part2(graph):
-    route1 = pairwise(("svr", "fft", "dac", "out"))
-    route2 = pairwise(("svr", "dac", "fft", "out"))
-    return count_paths_route(graph, route1) + count_paths_route(graph, route2)
+    return sum(
+        count_paths_in_route(graph, route)
+        for route in (
+            ("svr", "fft", "dac", "out"),
+            ("svr", "dac", "fft", "out"),
+        )
+    )
 
 
 if __name__ == "__main__":
