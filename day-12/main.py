@@ -25,16 +25,10 @@ def load_data(path):
 def enough_grid_cells(grid_w, grid_h, counts, shape_masses):
     """
     Can rule out some grid and shape count combinations if there aren't
-    possibly enough grid cells.
-
-    E.g. if one of the lines asked for two of the following shapes:
-
-                ..#
-                ###
-                ###
-
-    in a 4x3 grid, then there is definitely no solution, because together the
-    shapes would require a grid with at least 2x7=14 slots.
+    possibly enough grid cells. If one of the lines asks if two shapes that
+    were each composed of 7 '#' chars could fit in a 4x3 grid, then there is
+    definitely no solution, because together the shapes would require a grid
+    with at least 2x7=14 slots.
     """
     area_required = sum(m * c for m, c in zip(shape_masses, counts))
     grid_area = grid_w * grid_h
@@ -52,7 +46,6 @@ def can_trivially_pack(grid_w, grid_h, counts):
 
 
 def part1(path):
-
     data = tuple(load_data(path))
     shape_masses = data[:6]
     grid_dims_counts = data[6:]
