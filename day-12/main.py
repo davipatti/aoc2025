@@ -1,32 +1,25 @@
 def load_data(path):
     with open(path) as fobj:
-        shape_def = False
+        in_shape_def = False
+        shape_mass = 0  # A shape's 'mass' is its number of '#' characters
 
-        # Will call the number of grid slots that are occupied in each shape
-        # the shape's 'mass'. E.g. the this shape would have a mass of 7:
-        #
-        #    ..#
-        #    ###
-        #    ###
-        #
-        shape_mass = 0
         for line in fobj:
 
-            if shape_def:
+            if in_shape_def:
                 shape_mass += line.count("#")
                 if line.strip() == "":
                     yield shape_mass
                     shape_mass = 0
-                    shape_def = False
+                    in_shape_def = False
 
             elif line[1] == ":":
-                shape_def = True
+                in_shape_def = True
 
             elif "x" in line:
                 dims, *counts = line.strip().split()
-                w, h = map(int, dims[:-1].split("x"))
+                grid_w, grid_h = map(int, dims[:-1].split("x"))
                 counts = tuple(map(int, counts))
-                yield (w, h), counts
+                yield (grid_w, grid_h), counts
 
 
 def enough_grid_cells(grid_w, grid_h, counts, shape_masses):
