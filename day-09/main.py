@@ -31,8 +31,8 @@ class Rectangle:
         self.b = min(self.corner_a.y, self.corner_b.y)
 
     def __gt__(self, other) -> bool:
-        """Here mainly so that Rects can be put into heaps"""
-        return self.area > other.area
+        """Prioritise rectangles with the smallest area in a heap"""
+        return self.area < other.area
 
     @property
     def edges(self):
@@ -79,7 +79,7 @@ class AxisLine:
         return False
 
 
-def start_at_alt(items, i):
+def start_at_alternating(items, i):
     l = len(items)
     yield items[i]
     for offset in range(1, (l // 2) + 1):
@@ -101,19 +101,19 @@ def part1(path):
 def part2(path):
     points = load_data(path)
 
-    # The list wraps, so duplicating the first point at the end closes the loop
+    # The input list wraps. Duplicating point 1 at the end closes the loop
     lines = [AxisLine(*corners) for corners in pairwise(points + [points[0]])]
 
-    rectangles = []
-    for i, j in combinations(range(len(points)), 2):
-        rect = Rectangle(points[i], points[j])
-        rectangles.append((-rect.area, rect, i))
+    rectangles = [
+        (Rectangle(points[i], points[j]), i)
+        for i, j in combinations(range(len(points)), 2)
+    ]
 
     heapq.heapify(rectangles)
 
     while rectangles:
 
-        _, rect, i = heapq.heappop(rectangles)
+        rect, i = heapq.heappop(rectangles)
 
         if (
             # Rectangle can't contain any of the input points.
@@ -122,7 +122,10 @@ def part2(path):
             # is to corner_a, the more likely it is to be contained in the
             # rectangle, and if it is, the fewer point we have to iterate
             # through to potentially rule out this rectangle.
-            not any(rect.contains(point) for point in start_at_alt(points, i))
+            not any(
+                rect.contains(point)
+                for point in start_at_alternating(points, i)
+            )
         ) and (
             # Rectangle edges can't intersect any line between consecutive
             # input points.
